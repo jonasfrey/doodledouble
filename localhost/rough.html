@@ -1,0 +1,32 @@
+<canvas id="roughCanvas" width="600" height="400"></canvas>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/rough.js/4.3.1/rough.min.js"></script>
+<script>
+    const canvas = document.getElementById('roughCanvas');
+    const rc = rough.canvas(canvas);
+    const ctx = canvas.getContext('2d');
+    let eraserMode = false;
+    let drawing = false;
+
+    canvas.addEventListener('mousedown', () => (drawing = true));
+    canvas.addEventListener('mouseup', () => (drawing = false));
+
+    canvas.addEventListener('mousemove', (e) => {
+        if (!drawing) return;
+        const { offsetX, offsetY } = e;
+
+        if (eraserMode) {
+            ctx.clearRect(offsetX - 5, offsetY - 5, 10, 10); // Erase with small rectangle
+        } else {
+            rc.line(offsetX, offsetY, offsetX + 1, offsetY + 1);
+        }
+    });
+
+    // Toggle eraser mode with spacebar
+    document.addEventListener('keydown', (e) => {
+        if (e.code === 'Space') eraserMode = true;
+    });
+
+    document.addEventListener('keyup', (e) => {
+        if (e.code === 'Space') eraserMode = false;
+    });
+</script>

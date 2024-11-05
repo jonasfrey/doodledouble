@@ -1,0 +1,44 @@
+<div id="konvaContainer" style="width: 600px; height: 400px;"></div>
+<script src="https://cdn.jsdelivr.net/npm/konva@8.0.3/konva.min.js"></script>
+<script>
+    const stage = new Konva.Stage({
+        container: 'konvaContainer',
+        width: 600,
+        height: 400,
+    });
+
+    const layer = new Konva.Layer();
+    stage.add(layer);
+
+    let isDrawing = false;
+    let eraserMode = false;
+
+    stage.on('mousedown', () => (isDrawing = true));
+    stage.on('mouseup', () => (isDrawing = false));
+    stage.on('mousemove', (e) => {
+        if (!isDrawing) return;
+
+        const pos = stage.getPointerPosition();
+        const strokeColor = eraserMode ? 'rgba(255,255,255,1)' : 'black';
+
+        const line = new Konva.Line({
+            points: [pos.x, pos.y, pos.x + 1, pos.y + 1],
+            stroke: strokeColor,
+            strokeWidth: 10,
+            lineCap: 'round',
+            lineJoin: 'round',
+        });
+
+        layer.add(line);
+        layer.draw();
+    });
+
+    // Toggle eraser mode with spacebar
+    document.addEventListener('keydown', (e) => {
+        if (e.code === 'Space') eraserMode = true;
+    });
+
+    document.addEventListener('keyup', (e) => {
+        if (e.code === 'Space') eraserMode = false;
+    });
+</script>

@@ -1,0 +1,42 @@
+<div id="twoContainer"></div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/two.js/0.7.0/two.min.js"></script>
+<script>
+    const elem = document.getElementById('twoContainer');
+    const two = new Two({ width: 600, height: 400 }).appendTo(elem);
+
+    let eraserMode = false;
+    let currentPath;
+
+    elem.addEventListener('mousedown', (e) => {
+        const { offsetX, offsetY } = e;
+        if (eraserMode) {
+            two.scene.children.forEach(child => {
+                if (child.getBoundingClientRect().containsPoint(offsetX, offsetY)) {
+                    two.remove(child);
+                }
+            });
+            two.update();
+        } else {
+            currentPath = two.makePath(offsetX, offsetY, offsetX + 1, offsetY + 1);
+            currentPath.stroke = 'black';
+            currentPath.linewidth = 10;
+        }
+    });
+
+    elem.addEventListener('mousemove', (e) => {
+        if (!currentPath || eraserMode) return;
+        const { offsetX, offsetY } = e;
+        currentPath.vertices.push(new Two.Anchor(offsetX, offsetY));
+        two.update();
+    });
+
+    elem.addEventListener('mouseup', () => (currentPath = null));
+
+    document.addEventListener('keydown', (e) => {
+        if (e.code === 'Space') eraserMode = true;
+    });
+
+    document.addEventListener('keyup', (e) => {
+        if (e.code === 'Space') eraserMode = false;
+    });
+</script>

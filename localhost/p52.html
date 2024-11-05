@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>p5.js Double Canvas Example</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      position: relative;
+    }
+    .p5Canvas {
+      position: absolute;
+      top: 0;
+      left: 0;
+    }
+    #drawing-canvas {
+      z-index: 1;
+    }
+    #cursor-canvas {
+      z-index: 2;
+      pointer-events: none; /* Allow mouse events to pass through */
+    }
+  </style>
+  <!-- Include the p5.js library -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.6.0/p5.min.js"></script>
+</head>
+<body>
+  <canvas id="drawing-canvas"></canvas>
+  <canvas id="cursor-canvas"></canvas>
+  <!-- No canvas elements in HTML; p5.js will create them -->
+
+  <!-- Your script -->
+  <script>
+    // Shared variable for brush size
+    let brushSize = 10;
+
+    const drawingSketch = (p) => {
+      let eraserMode = false;
+
+      p.setup = function() {
+        const canvasElement = document.getElementById('drawing-canvas');
+        console.log({canvasElement})
+        let o_el_par = canvasElement.parentElement
+        o_el_par.removeChild(canvasElement);
+        const canvas = p.createCanvas(canvasElement.width, canvasElement.height);
+        canvas.id('drawing-canvas');
+        canvas.class('p5Canvas');
+        o_el_par.appendChild(canvas.canvas);
+        p.canvas = canvasElement;
+        p.drawingContext = canvasElement.getContext('2d');
+        p.width = canvasElement.width;
+        p.height = canvasElement.height;
+        p.strokeWeight(brushSize);
+        p.background(255);
+        p.noCursor(); // Hide the default cursor
+      };
+
+      p.draw = function() {
+        if (p.mouseIsPressed) {
+          p.stroke(eraserMode ? 255 : 0);
+          p.strokeWeight(brushSize);
+          p.line(p.mouseX, p.mouseY, p.pmouseX, p.pmouseY);
+        }
+      };
+
+      p.keyPressed = function() {
+        if (p.key === ' ') {
+          eraserMode = true;
+        }
+      };
+
+      p.keyReleased = function() {
+        if (p.key === ' ') {
+          eraserMode = false;
+        }
+      };
+    };
+
+    const cursorSketch = (p) => {
+      p.setup = function() {
+        const canvasElement = document.getElementById('cursor-canvas');
+        console.log({canvasElement})
+        let o_el_par = canvasElement.parentElement
+        o_el_par.removeChild(canvasElement);
+        const canvas = p.createCanvas(canvasElement.width, canvasElement.height);
+        canvas.id('cursor-canvas');
+        canvas.class('p5Canvas');
+        o_el_par.appendChild(canvas.canvas);
+        p.canvas = canvasElement;
+        p.drawingContext = canvasElement.getContext('2d');
+        p.width = canvasElement.width;
+        p.height = canvasElement.height;
+        p.noStroke();
+        p.noCursor(); // Hide the default cursor
+      };
+
+      p.draw = function() {
+        p.clear(); // Clear the canvas each frame to prevent trails
+        p.fill(0, 255, 0, 150); // Semi-transparent green fill
+        p.stroke(255, 0, 0); // Red border
+        p.strokeWeight(2);
+
+        // Draw the cursor circle at the mouse position
+        if (
+          p.mouseX >= 0 &&
+          p.mouseX <= p.width &&
+          p.mouseY >= 0 &&
+          p.mouseY <= p.height
+        ) {
+          p.ellipse(p.mouseX, p.mouseY, brushSize, brushSize);
+        }
+      };
+    };
+
+    // Initialize the p5.js instances
+    const drawingP5 = new window.p5(drawingSketch);
+    const cursorP5 = new window.p5(cursorSketch);
+  </script>
+</body>
+</html>

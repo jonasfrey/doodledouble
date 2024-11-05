@@ -1,0 +1,37 @@
+<script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.4.0/p5.js"></script>
+<script>
+    let eraserMode = false;
+
+    function setup() {
+        createCanvas(600, 400);
+        background(255);
+        strokeWeight(10);
+    }
+
+    function draw() {
+        if (mouseIsPressed) {
+            stroke(eraserMode ? 255 : 0);
+            line(mouseX, mouseY, pmouseX, pmouseY);
+        }
+    }
+
+    // Toggle eraser mode with spacebar
+    function keyPressed() {
+        if (key === ' ') eraserMode = true;
+    }
+
+    function keyReleased() {
+        if (key === ' ') eraserMode = false;
+    }
+
+    window.onload = function(){
+
+        console.log(createCanvas)
+        let eraserMode = false;
+        window.setTimeout(()=>{
+            console.log({createCanvas})
+        },5000)
+
+    }
+
+</script>
